@@ -126,14 +126,14 @@ appears on the left side of the page.
     /*
     This styles the selected menu item `<li>`.
     */
-    #menu .pure-menu-selected,
+    #menu .pure_menu_selected,
     #menu .pure-menu-heading {
         background: #1f8dd6;
     }
         /*
         This styles a link within a selected menu item `<li>`.
         */
-        #menu .pure-menu-selected a {
+        #menu .pure_menu_selected a {
             color: #fff;
         }
 

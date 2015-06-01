@@ -3,12 +3,13 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="document for catphp">
+	<meta name="description" content="CatDoc the best tools for document">
 
-	<title>Document For CatPHP</title>
+	<title>CatDoc</title>
 
 	<link rel="stylesheet" href="css/pure-min.css">
     <link rel="stylesheet" href="css/side-menu.css">
+    <link rel="stylesheet" href="editor.md-master/css/editormd.min.css">
     <style type="text/css">
     #doc_plain{
         height:1600px;width:100%;border:0;  background-color: #FCFCFC;
@@ -16,6 +17,7 @@
     #out{
           padding-left: 18px;
     }
+    input{outline:none} 
     </style>
 </head>
 <body>
@@ -27,11 +29,12 @@
 			<div class="pure-menu">
 				<a class="pure-menu-heading" href="/">CatPHP</a>
 				<ul class="pure-menu-list">
-        <li ng-repeat="doc in docs | orderBy:orderProp" class="pure-menu-item"><a href="#{{doc._id}}" ng-click="to(doc._id)" class="pure-menu-link">{{doc.name}}<span>×</span></a></li>
+        <li ng-repeat="doc in docs | orderBy:orderProp" class="pure-menu-item" ng-class='{pure_menu_selected:doc._id==selected}'><a href="#{{doc._id}}" ng-click="to(doc._id)" class="pure-menu-link">{{doc.name}}<span>×</span></a></li>
 				</ul>
       </div>
           <input id="new_chapter" name="title" /><button id="new_chapter_btn">新建</button>
           <button id="export_btn"><a href="http://127.0.0.1/document/export?project_id=555ede4815d55cdc2900003f">导出</a></button>
+          <button id="rename_chapter_btn" ng-click="rename(doc._id)">重命名</button>
 		</div>
 
 
@@ -40,16 +43,71 @@
         <!-- <div id="epiceditor" style="height:960px"></div> -->
 
     <div class="pure-g">
-    <div class="pure-u-1-2"><textarea id="doc_plain" name="doc_plain"></textarea></div>
-    <div class="pure-u-1-2"><div id="out"></div></div>
+    <div class="pure-u-1-1" id="editormd">
+        <!-- <textarea id="doc_plain" name="doc_plain"></textarea> -->
+    </div>
+    <!-- <div class="pure-u-1-2"><div id="out"></div></div> -->
 </div>
 
 </body>
 <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" src="js/angular.min.js"></script>
 <script type="text/javascript" src="js/remarkable.min.js"></script>
+<script type="text/javascript" src="editor.md-master/editormd.min.js"></script>
 <script type="text/javascript">
+var Editor;
 
+$(function() {
+    Editor = editormd("editormd", {
+        width   : "100%",
+        height  : 640,
+        path    : "editor.md-master/lib/",
+        saveHTMLToTextarea : true, 
+        onchange : function() {
+            var  content = this.getValue()
+            $.post('http://127.0.0.1/document/save', {doc_id: doc_id,content:content}, function(data, textStatus, xhr) {
+                  console.log(data);
+            });
+        },
+        //syncScrolling : false,
+        searchReplace : true,
+        //watch : false,                // 关闭实时预览
+        htmlDecode : "style,script,iframe",            // 开启HTML标签解析，为了安全性，默认不开启    
+        // toolbar  : false,             //关闭工具栏
+        //previewCodeHighlight : false, // 关闭预览HTML的代码块高亮，默认开启
+        emoji : true,
+        taskList : true,
+        tocm            : true,         // Using [TOCM]
+        tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+        flowChart : true,             // 开启流程图支持，默认关闭
+        sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
+        //dialogLockScreen : false,   // 设置弹出层对话框不锁屏，全局通用，默认为true
+        //dialogShowMask : false,     // 设置弹出层对话框显示透明遮罩层，全局通用，默认为true
+        //dialogDraggable : false,    // 设置弹出层对话框不可拖动，全局通用，默认为true
+        //dialogMaskOpacity : 0.4,    // 设置透明遮罩层的透明度，全局通用，默认值为0.1
+        //dialogMaskBgColor : "#000", // 设置透明遮罩层的背景颜色，全局通用，默认为#fff
+        imageUpload : true,
+        imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+        imageUploadURL : "./php/upload.php",
+        toolbarIcons : function() {
+        return ["undo", "redo", "|", "bold", "hr", "|","link","code","preformatted-text","code-block","|", "table","datetime",
+         "||", "preview"]
+        },
+
+
+
+    });
+    
+    /*
+    // or
+    Editor = editormd({
+        id      : "test-editormd",
+        width   : "90%",
+        height  : 640,
+        path    : "../lib/"
+    });
+    */
+});
 // var Remarkable = require('remarkable');
 var md = new Remarkable();
 
@@ -63,15 +121,23 @@ catDocApp.controller('docListCtrl',function($scope,$http){
   })
 
   $scope.orderProp = 'name';
+  // $scope.notSelectClass = ""
 
   $scope.to = function(id){
     doc_id = id
     $http.get('http://127.0.0.1/document/read?doc_id='+id).success(function(data){
       // document.getElementById('doc_plain').text = data.info.content
-      $('#doc_plain').val(data.info.content)
-      $('#out').empty().append(md.render(data.info.content))
+      // $('#doc_plain').val(data.info.content)
+      Editor.setMarkdown(data.info.content)
+      // $('#out').empty().append(md.render(data.info.content))
 
     })
+    $scope.selected = id
+    doc_id = id
+  }
+
+  $scope.rename = function(id){
+    console.log(id)
   }
 
 })
@@ -86,8 +152,9 @@ $(document).keydown(function(e) {
     return true;
 });
 function save(){
-  var  doc_id  = $('.pure-menu-selected a').attr('href').substr(1)
-  var  content = $('#doc_plain').val()
+  // var  doc_id  = $('.pure-menu-selected a').attr('href').substr(1)
+  // var  content = $('#doc_plain').val()
+  var  content = Editor.getHTML()
   console.log(content+doc_id);
    $.post('http://127.0.0.1/document/save', {doc_id: doc_id,content:content}, function(data, textStatus, xhr) {
       console.log(data);
@@ -95,6 +162,14 @@ function save(){
 }
 
 
+// $('#doc_plain').keyup(function(){
+//     $('#out').empty().append(md.render($(this).val()))
+//     save()
+// })
+
+
+
+            
 
 
 
@@ -190,12 +265,12 @@ function save(){
 
 
     // 添加点击变色
-    $('.pure-menu-list').delegate('.pure-menu-item', 'click', function(event) {
-        $('.pure-menu-selected').removeClass('pure-menu-selected')
-        var t = $(this)
-        t.addClass('pure-menu-selected')
+    // $('.pure-menu-list').delegate('.pure-menu-item', 'click', function(event) {
+    //     $('.pure-menu-selected').removeClass('pure-menu-selected')
+    //     var t = $(this)
+    //     t.addClass('pure-menu-selected')
 
-    });
+    // });
 
 
 
