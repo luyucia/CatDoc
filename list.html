@@ -17,7 +17,7 @@
     #out{
           padding-left: 18px;
     }
-    input{outline:none} 
+    input{outline:none}
     </style>
 </head>
 <body>
@@ -29,21 +29,23 @@
 			<div class="pure-menu">
 				<a class="pure-menu-heading" href="/">CatPHP</a>
 				<ul class="pure-menu-list">
-        <li ng-repeat="doc in docs | orderBy:orderProp" class="pure-menu-item" ng-class='{pure_menu_selected:doc._id==selected}'><a href="#{{doc._id}}" ng-click="to(doc._id)" class="pure-menu-link">{{doc.name}}<span>×</span></a></li>
-				</ul>
-      </div>
-          <input id="new_chapter" name="title" /><button id="new_chapter_btn">新建</button>
-          <button id="export_btn"><a href="http://127.0.0.1/document/export?project_id=555ede4815d55cdc2900003f">导出</a></button>
-          <button id="rename_chapter_btn" ng-click="rename(doc._id)">重命名</button>
-		</div>
+                    <li ng-repeat="doc in docs " class="pure-menu-item" ng-class='{pure_menu_selected:doc._id==selected}'>
+                        <a href="#{{doc._id}}" ng-click="to(doc._id,$index)" class="pure-menu-link">{{doc.name}}<span>×</span></a>
+                    </li>
+                </ul>
+            </div>
+            <input id="new_chapter" name="title" ng-model="user_input" /><button id="new_chapter_btn">新建</button>
+            <button id="export_btn"><a href="http://127.0.0.1/document/export?project_id=555ede4815d55cdc2900003f">导出</a></button>
+            <button id="rename_chapter_btn" ng-click="rename()">重命名</button>
+        </div>
 
 
 
     <input type="hidden" id="project_id" value="555ede4815d55cdc2900003f" />
         <!-- <div id="epiceditor" style="height:960px"></div> -->
 
-    <div class="pure-g">
-    <div class="pure-u-1-1" id="editormd">
+    <!-- <div class="pure-g"> -->
+    <div id="editormd">
         <!-- <textarea id="doc_plain" name="doc_plain"></textarea> -->
     </div>
     <!-- <div class="pure-u-1-2"><div id="out"></div></div> -->
@@ -60,9 +62,9 @@ var Editor;
 $(function() {
     Editor = editormd("editormd", {
         width   : "100%",
-        height  : 640,
+        height  : 900,
         path    : "editor.md-master/lib/",
-        saveHTMLToTextarea : true, 
+        saveHTMLToTextarea : true,
         onchange : function() {
             var  content = this.getValue()
             $.post('http://127.0.0.1/document/save', {doc_id: doc_id,content:content}, function(data, textStatus, xhr) {
@@ -72,13 +74,13 @@ $(function() {
         //syncScrolling : false,
         searchReplace : true,
         //watch : false,                // 关闭实时预览
-        htmlDecode : "style,script,iframe",            // 开启HTML标签解析，为了安全性，默认不开启    
+        htmlDecode : "style,script,iframe",            // 开启HTML标签解析，为了安全性，默认不开启
         // toolbar  : false,             //关闭工具栏
         //previewCodeHighlight : false, // 关闭预览HTML的代码块高亮，默认开启
         emoji : true,
         taskList : true,
         tocm            : true,         // Using [TOCM]
-        tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+        tex : false,                   // 开启科学公式TeX语言支持，默认关闭
         flowChart : true,             // 开启流程图支持，默认关闭
         sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
         //dialogLockScreen : false,   // 设置弹出层对话框不锁屏，全局通用，默认为true
@@ -97,7 +99,7 @@ $(function() {
 
 
     });
-    
+
     /*
     // or
     Editor = editormd({
@@ -112,6 +114,8 @@ $(function() {
 var md = new Remarkable();
 
 var doc_id = null
+var doc_index = null
+
 var catDocApp = angular.module('catDocApp',[]);
 
 catDocApp.controller('docListCtrl',function($scope,$http){
@@ -123,7 +127,7 @@ catDocApp.controller('docListCtrl',function($scope,$http){
   $scope.orderProp = 'name';
   // $scope.notSelectClass = ""
 
-  $scope.to = function(id){
+  $scope.to = function(id,index){
     doc_id = id
     $http.get('http://127.0.0.1/document/read?doc_id='+id).success(function(data){
       // document.getElementById('doc_plain').text = data.info.content
@@ -134,10 +138,15 @@ catDocApp.controller('docListCtrl',function($scope,$http){
     })
     $scope.selected = id
     doc_id = id
+    doc_index = index
   }
 
-  $scope.rename = function(id){
-    console.log(id)
+  $scope.rename = function(){
+    var newName = $scope.user_input
+    $http.post('http://127.0.0.1/document/rename',{'doc_id': doc_id,'newname':newName}).success(function(data){
+        console.log(doc_id);
+        $scope.docs[doc_index]['name'] = newName
+    })
   }
 
 })
@@ -151,11 +160,13 @@ $(document).keydown(function(e) {
     }
     return true;
 });
+
+
 function save(){
   // var  doc_id  = $('.pure-menu-selected a').attr('href').substr(1)
   // var  content = $('#doc_plain').val()
   var  content = Editor.getHTML()
-  console.log(content+doc_id);
+  // console.log(content+doc_id);
    $.post('http://127.0.0.1/document/save', {doc_id: doc_id,content:content}, function(data, textStatus, xhr) {
       console.log(data);
    });
@@ -169,7 +180,7 @@ function save(){
 
 
 
-            
+
 
 
 
