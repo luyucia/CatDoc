@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en" ng-app="catDocApp">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CatDoc the best tools for document">
+    <link rel="stylesheet" href="google-code-prettify/prettify.css">
+    <title>CatDoc</title>
+    <link rel="stylesheet" href="css/pure-min.css">
+    <style type="text/css">
+    body{
+        position: relative;
+    }
+    .api_params{
+
+        width: 100%;
+    }
+    #rtn_container{
+        display: none;
+        position: fixed;
+        border: 1px solid #D2D2D2;
+        top: 0;
+        right: 0;
+        background: #fff;
+        opacity: 0.8;
+        width:25%;
+        padding: 20px;
+
+    }
+    #rtn_container:hover{
+        opacity: 1
+    }
+    .pure-table {
+        width: 100%;
+    }
+
+    </style>
+</head>
+<body onload="prettyPrint()">
+    <div id="layout">
+
+        <div>
+            <form id="api_form" class="pure-form pure-form-aligned">
+                <fieldset>
+                    <div class="pure-control-group">
+                        <label for="name">接口名称</label>
+                        <input name="name" id="name" type="text" placeholder="接口名称">
+                    </div>
+                    <div class="pure-control-group">
+                        <label for="url">URL</label>
+                        <input name="url" id="url" type="text" placeholder="URL">
+                    </div>
+
+                    <div class="pure-control-group">
+                        <label for="password">method</label>
+                        <select name="method" id="method" class="pure-input-medium">
+                            <option value="post">post</option>
+                            <option value="get">get</option>
+                            <option value="put">put</option>
+                            <option value="delete">delete</option>
+                        </select>
+                    </div>
+
+                    <div class="pure-control-group">
+                        <label for="params">请求参数</label>
+                        <input name="params" id="params" type="text" placeholder="请输入参数">
+                    </div>
+
+                    <div class="pure-controls">
+                        <button id="save_btn" type="button" class="pure-button pure-button-primary">保存</button>
+                    </div>
+                </fieldset>
+            <div class="pure-control-group">
+                <label for="search">搜索</label>
+                <input name="search" id="search" type="text" placeholder="关键字">
+            </div>
+            </form>
+        </div>
+        <div>
+            <div >
+                <div class="pure-g">
+
+                    <div class="pure-u-1-1">
+                        <table class="pure-table ">
+                            <thead>
+                                <tr>
+                                    <th>接口名</th>
+                                    <th>url</th>
+                                    <th>方法</th>
+                                    <th>参数</th>
+                                    <th>测试</th>
+                                    <th>删除</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablelist">
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <div id="rtn_container">
+        <div><button id="close_btn" type="button" class="pure-button pure-button-primary">关闭</button></div>
+        <div class="pure-u-1-1 cost"></div>
+        <pre class="api_rtn"></pre>
+    </div>
+</body>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/remarkable.min.js"></script>
+<script type="text/javascript" src="google-code-prettify/prettify.js"></script>
+<script type="text/javascript" src="js/doT.min.js"></script>
+<script id="doclist" type="text/x-dot-template">
+{{~it :value:index}}
+<tr dataid="{{=value.id}}" class="">
+    <td>{{=value.name}}</td>
+    <td class="api_url">{{=value.url}}</td>
+    <td class="api_method">{{=value.method}}</td>
+    <td class="pure-form"><input class="api_params " value="{{=value.params}}"></td>
+    <td><button type="button" class="pure-button pure-button-primary test_btn" dataid="{{=value.id}}">Test</button></td>
+    <td><button type="button" class="pure-button pure-button-error del_btn" dataid="{{=value.id}}">删除</button></td>
+</tr>
+{{~}}
+</script>
+    <!-- // <td><pre class="api_rtn">{{=value.rtn}}</pre></td> -->
+
+
+<script type="text/javascript">
+
+$('#search').keyup(function(){
+    var k = $(this).val()
+    // $('#tablelist tr').hide()
+    if (k=='') {
+        $("#tablelist tr").show();
+    }else{
+        $("#tablelist tr:not(:contains('"+k+"'))").hide();
+        $("#tablelist tr:contains('"+k+"')").show();
+    }
+})
+
+$('#save_btn').click(function(){
+    $.post('api/add',$('#api_form').serialize(),function(d){
+        render()
+    })
+})
+
+$('#close_btn').click(function(){
+    $('#rtn_container').fadeOut()
+})
+
+function render(){
+    $.post('api/lists',{},function(d){
+        var d = jQuery.parseJSON(d)
+        var evalText = doT.template($("#doclist").text());
+        $("#tablelist").html(evalText(d.info));
+        $('pre').addClass('prettyprint')
+    })
+}
+render()
+
+
+$("#tablelist").delegate('.test_btn','click',function(){
+
+    var id = $(this).attr('dataid')
+    var tr = $('tr[dataid="'+id+'"]')
+    url  = tr.find('.api_url').text()
+    method  = tr.find('.api_method').text()
+    params  = tr.find('.api_params').val()
+    data = {}
+    data['url'] = url
+    data['method'] = method
+    data['params'] = params
+    data['id'] = id
+
+    $.post('api/test',data,function(d){
+        var d = jQuery.parseJSON(d)
+        $('.api_rtn').text(d.rtn)
+        $('.cost').text(d.cost)
+        prettyPrint()
+        $('#rtn_container').fadeIn()
+        // render()
+    })
+})
+
+
+$("#tablelist").delegate('.del_btn','click',function(){
+    if (confirm('确认删除?')) {
+        var id = $(this).attr('dataid')
+        data = {}
+        data['id'] = id
+        $.post('api/delete',data,function(d){
+            render()
+        })
+    };
+
+})
+
+$("#tablelist").delegate('tr','click',function(){
+    url     = $(this).find('.api_url').text()
+    method  = $(this).find('.api_method').text()
+    params  = $(this).find('.api_params').val()
+
+    $(':input[name="name"]').val('未命名')
+    $(':input[name="url"]').val(url)
+    $(':input[name="params"]').val(params)
+    $(':input[name="method"]').find('option[value="'+method+'"]').attr("selected",true)
+
+
+
+})
+
+// var dataInter = {"name":"Jake","age":31};
+// var interText = doT.template($("#doclist").text());
+// $("#apilist").html(interText(dataInter));
+</script>
+</html>
