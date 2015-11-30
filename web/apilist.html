@@ -1,222 +1,244 @@
 <!doctype html>
-<html lang="en" ng-app="catDocApp">
+<html lang="en" >
 <head>
+    <title>CatDoc</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="CatDoc the best tools for document">
-    <link rel="stylesheet" href="google-code-prettify/prettify.css">
-    <title>CatDoc</title>
-    <link rel="stylesheet" href="css/pure-min.css">
-    <style type="text/css">
-    body{
-        position: relative;
-    }
-    .api_params{
-
-        width: 100%;
-    }
-    #rtn_container{
-        display: none;
-        position: fixed;
-        border: 1px solid #D2D2D2;
-        top: 0;
-        right: 0;
-        background: #fff;
-        opacity: 0.8;
-        width:25%;
-        padding: 20px;
-        height: 100%;
-        overflow: auto;
-
-    }
-    #rtn_container:hover{
-        opacity: 1
-    }
-    .pure-table {
-        width: 100%;
-    }
-
-    </style>
+    <link rel="stylesheet" href="/static/assets/dist/semantic.min.css">
+    <link rel="stylesheet" href="/static/assets/base.css">
+    <link rel="stylesheet" href="js/jsonFormater/jsonFormater.css">
 </head>
-<body onload="prettyPrint()">
-    <div id="layout">
-
-        <div>
-            <form id="api_form" class="pure-form pure-form-aligned">
-                <fieldset>
-                    <div class="pure-control-group">
-                        <label for="name">接口名称</label>
-                        <input name="name" id="name" type="text" placeholder="接口名称">
-                    </div>
-                    <div class="pure-control-group">
-                        <label for="url">URL</label>
-                        <input name="url" id="url" type="text" placeholder="URL">
-                    </div>
-
-                    <div class="pure-control-group">
-                        <label for="password">method</label>
-                        <select name="method" id="method" class="pure-input-medium">
-                            <option value="post">post</option>
-                            <option value="get">get</option>
-                            <option value="put">put</option>
-                            <option value="delete">delete</option>
-                        </select>
-                    </div>
-
-                    <div class="pure-control-group">
-                        <label for="params">请求参数</label>
-                        <input name="params" id="params" type="text" placeholder="请输入参数">
-                    </div>
-
-                    <div class="pure-controls">
-                        <button id="save_btn" type="button" class="pure-button pure-button-primary">保存</button>
-                    </div>
-                </fieldset>
-            <div class="pure-control-group">
-                <label for="search">搜索</label>
-                <input name="search" id="search" type="text" placeholder="关键字">
-            </div>
-            </form>
+<body>
+<div class="warp">
+    <h3 className="ui header">
+        WiFi点点文档系统
+    </h3>
+    <div class="ui styled fluid accordion info condition">
+        <div class="title">
+            <i class="dropdown icon"></i> 检索
         </div>
-        <div>
-            <div >
-                <div class="pure-g">
-
-                    <div class="pure-u-1-1">
-                        <table class="pure-table ">
-                            <thead>
-                                <tr>
-                                    <th>接口名</th>
-                                    <th>url</th>
-                                    <th>方法</th>
-                                    <th>参数</th>
-                                    <th>测试</th>
-                                    <th>删除</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablelist">
-                            </tbody>
-                        </table>
-
-                    </div>
+        <div class="content">
+            <form class="ui form">
+                <div class="ui icon fluid input focus">
+                    <input type="text" name="keywords" id="search" placeholder="请输入关键字" />
+                    <i class="circular search link icon"></i>
                 </div>
 
-            </div>
-
+            </form>
         </div>
 
+        <div class="title">
+            <i class="dropdown icon"></i> 添加文档
+        </div>
+        <div class="content">
+            <form class="ui form" id="api_form">
+                <div class="field">
+                    <label>接口名称</label>
+                    <input name="name" id="name" type="text" />
+                </div>
+                <div class="field">
+                    <label>URL</label>
+                    <input id="url" type="text" placeholder="http://www.510wifi.com" name="url"/>
+                </div>
+                <div class="field">
+                    <label>Method</label>
+                    <select class="ui dropdown" name="method" id="method" >
+                        <option value="post">post</option>
+                        <option value="get">get</option>
+                        <option value="put">put</option>
+                        <option value="delete">delete</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>请求参数</label>
+                    <input type="text" placeholder="请求参数" name="params" id="params" />
+                </div>
+
+                <button class="ui secondary button" id="save_btn">保存</button>
+            </form>
+        </div>
     </div>
-    <div id="rtn_container">
-        <div><button id="close_btn" type="button" class="pure-button pure-button-primary">关闭</button></div>
-        <div class="pure-u-1-1 cost"></div>
-        <pre class="api_rtn"></pre>
+
+    <div class="ui horizontal divider">
+        ^_^
     </div>
+
+    <div>
+        <table class="ui celled table">
+            <thead>
+            <tr>
+                <th>接口名</th>
+                <th>URL</th>
+                <th>方法</th>
+                <th>参数</th>
+                <th>测试</th>
+                <th>删除</th>
+            </tr>
+            </thead>
+            <tbody id="tablelist">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="ui long test modal">
+    <i class="close icon"></i>
+    <div class="header cost">
+    </div>
+    <div class="content">
+        <div class="description api_rtn">
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui button" id="close_btn">关闭</div>
+    </div>
+</div>
+
 </body>
 <script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
-<script type="text/javascript" src="js/remarkable.min.js"></script>
-<script type="text/javascript" src="google-code-prettify/prettify.js"></script>
+<script type="text/javascript" src="/static/assets/dist/semantic.min.js"></script>
+<script type="text/javascript" src="js/jsonFormater/jsonFormater.js"></script>
 <script type="text/javascript" src="js/doT.min.js"></script>
-<script id="doclist" type="text/x-dot-template">
-{{~it :value:index}}
-<tr dataid="{{=value.id}}" class="">
-    <td>{{=value.name}}</td>
-    <td class="api_url">{{=value.url}}</td>
-    <td class="api_method">{{=value.method}}</td>
-    <td class="pure-form"><input class="api_params " value="{{=value.params}}"></td>
-    <td><button type="button" class="pure-button pure-button-primary test_btn" dataid="{{=value.id}}">Test</button></td>
-    <td><button type="button" class="pure-button pure-button-error del_btn" dataid="{{=value.id}}">删除</button></td>
-</tr>
-{{~}}
-</script>
-    <!-- // <td><pre class="api_rtn">{{=value.rtn}}</pre></td> -->
 
+<script id="doclist" type="text/x-dot-template">
+    {{~it :value:index}}
+    <tr dataid="{{=value.id}}" >
+        <td>
+            <div class="ui teal ribbon label"> {{=value.name}} </div>
+        </td>
+        <td class="api_url" >{{=value.url}}</td>
+        <td class="api_method" >{{=value.method}}</td>
+        <td>
+            <div class="ui form">
+                <div class="field">
+                    <textarea rows="2" class="api_params" >{{=value.params}}</textarea>
+                </div>
+            </div>
+        </td>
+        <td class="simulation">
+            <button class="ui blue basic button small test_btn" dataid="{{=value.id}}">
+                模拟
+            </button>
+        </td>
+        <td>
+            <button class="ui red  basic button small del_btn" dataid="{{=value.id}}">
+                删除
+            </button>
+        </td>
+    </tr>
+    {{~}}
+</script>
 
 <script type="text/javascript">
 
-$('#search').keyup(function(){
-    var k = $(this).val()
-    // $('#tablelist tr').hide()
-    if (k=='') {
-        $("#tablelist tr").show();
-    }else{
-        $("#tablelist tr:not(:contains('"+k+"'))").hide();
-        $("#tablelist tr:contains('"+k+"')").show();
-    }
-})
+    //快速检索
+    $('#search').keyup(function () {
+        var k = $(this).val();
+        // $('#tablelist tr').hide()
+        if (k == '') {
+            $("#tablelist tr").show();
+        } else {
+            $("#tablelist tr:not(:contains('" + k + "'))").hide();
+            $("#tablelist tr:contains('" + k + "')").show();
+        }
+    });
 
-$('#save_btn').click(function(){
-    $.post('api/add',$('#api_form').serialize(),function(d){
-        render()
-    })
-})
+    //添加接口
+    $('#save_btn').click(function () {
+        $.post('api/add', $('#api_form').serialize(), function (d) {
+            render();
+        });
+    });
 
-$('#close_btn').click(function(){
-    $('#rtn_container').fadeOut()
-})
+    //关闭弹层
+    $('#close_btn').click(function () {
+        $('.long.test.modal').modal('hide');
+    });
 
-function render(){
-    $.post('api/lists',{},function(d){
-        var d = jQuery.parseJSON(d)
-        var evalText = doT.template($("#doclist").text());
-        $("#tablelist").html(evalText(d.info));
-        $('pre').addClass('prettyprint')
-    })
-}
-render()
-
-
-$("#tablelist").delegate('.test_btn','click',function(){
-
-    var id = $(this).attr('dataid')
-    var tr = $('tr[dataid="'+id+'"]')
-    url  = tr.find('.api_url').text()
-    method  = tr.find('.api_method').text()
-    params  = tr.find('.api_params').val()
-    data = {}
-    data['url'] = url
-    data['method'] = method
-    data['params'] = params
-    data['id'] = id
-
-    $.post('api/test',data,function(d){
-        var d = jQuery.parseJSON(d)
-        $('.api_rtn').text(d.rtn)
-        $('.cost').text(d.cost)
-        prettyPrint()
-        $('#rtn_container').fadeIn()
-        // render()
-    })
-})
-
-
-$("#tablelist").delegate('.del_btn','click',function(){
-    if (confirm('确认删除?')) {
-        var id = $(this).attr('dataid')
-        data = {}
-        data['id'] = id
-        $.post('api/delete',data,function(d){
-            render()
+    //加载表格
+    function render() {
+        $.post('api/lists', {}, function (d) {
+            var d = jQuery.parseJSON(d);
+            var evalText = doT.template($("#doclist").text());
+            $("#tablelist").html(evalText(d.info));
+            $('pre').addClass('prettyprint');
         })
+    }
+    render();
+
+    //测试接口
+    //json格式化
+    var options = {
+        dom : '.api_rtn' //对应容器的css选择器
     };
+    var jf = new JsonFormater(options); //创建对象
+    $("#tablelist").delegate('.test_btn', 'click', function () {
 
-})
+        var id = $(this).attr('dataid');
+        var tr = $('tr[dataid="' + id + '"]');
+        url = tr.find('.api_url').text();
+        method = tr.find('.api_method').text();
+        params = tr.find('.api_params').val();
+        data = {};
+        data['url'] = url;
+        data['method'] = method;
+        data['params'] = params;
+        data['id'] = id;
 
-$("#tablelist").delegate('tr','click',function(){
-    url     = $(this).find('.api_url').text()
-    method  = $(this).find('.api_method').text()
-    params  = $(this).find('.api_params').val()
+        $.ajax({
+            url:'api/test',
+            data:data,
+            type:'post',
+            dataType:'json',
+            beforeSend: function () {
+//                $('.long.test.modal').modal('show');
+            },
+            success:function(d){
+                $('.long.test.modal').modal('show');
+//                $('.api_rtn').text(d.rtn);
+                $('.cost').text(d.cost);
 
-    $(':input[name="name"]').val('未命名')
-    $(':input[name="url"]').val(url)
-    $(':input[name="params"]').val(params)
-    $(':input[name="method"]').find('option[value="'+method+'"]').attr("selected",true)
+                jf.doFormat(d.rtn); //格式化json
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+            }
+        });
+    });
+
+    //删除接口
+    $("#tablelist").delegate('.del_btn', 'click', function () {
+        if (confirm('确认删除?')) {
+            var id = $(this).attr('dataid');
+            data = {};
+            data['id'] = id;
+            $.post('api/delete', data, function (d) {
+                render();
+            })
+        }
+    });
+
+    //信息上屏
+    $("#tablelist").delegate('tr', 'click', function () {
+        $('.ui.accordion').accordion('open', 1);
+        url = $(this).find('.api_url').text();
+        params = $(this).find('.api_params').val();
+        method = $(this).find('.api_method').text();
+
+        $(':input[name="name"]').val('未命名');
+        $(':input[name="url"]').val(url);
+        $(':input[name="params"]').val(params);
+//        $(':input[name="method"]').find('option[value="' + method + '"]').attr("selected", true);
+        $(':input[name="method"]').dropdown('set value', method)
+    });
+
+    //初始化表单组件
+    $('select.dropdown').dropdown();
+    $('.ui.accordion').accordion();
+    //初始化弹出层
+    $('.ui.modal').modal();
 
 
-
-})
-
-// var dataInter = {"name":"Jake","age":31};
-// var interText = doT.template($("#doclist").text());
-// $("#apilist").html(interText(dataInter));
 </script>
 </html>
