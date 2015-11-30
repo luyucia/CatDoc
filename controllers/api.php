@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @name IndexController
  * @author Luyu
@@ -7,12 +8,11 @@
 class apiController extends BaseController {
 
     // 添加api
-    public function add()
-    {
+    public function add() {
         // 解析参数
-        $params    =  P('params');
-        $url       =  P('url');
-        $method    =  P('method');
+        $params = P('params');
+        $url = P('url');
+        $method = P('method');
         // 构造请求
         // $post = $this->parseParam($params);
         // 验签
@@ -32,8 +32,7 @@ class apiController extends BaseController {
         echo $rtn;
     }
 
-    private function parseParam($param)
-    {
+    private function parseParam($param) {
         $postdata = array();
         $params = explode('&', $param);
         if (!empty($params[0])) {
@@ -45,29 +44,26 @@ class apiController extends BaseController {
         return $postdata;
     }
 
-    public function sign($data)
-    {
+    public function sign($data) {
         $skey = '18fnssnfl0efk89jrf348';
-        $time =  intval(microtime(true));
+        $time = intval(microtime(true));
         $s = '';
         ksort($data);
         foreach ($data as $key => $value) {
-            $s.=$key . $value;
+            $s .= $key . $value;
         }
-        $s.=$skey;
-        $s.=$time;
-        return md5($s).".$time";
+        $s .= $skey;
+        $s .= $time;
+        return md5($s) . ".$time";
     }
 
-    public function lists()
-    {
+    public function lists() {
         $sql = "select * from api order by `order`";
         $rs = $this->db->query($sql);
-        $this->echoJson(0,$rs);
+        $this->echoJson(0, $rs);
     }
 
-    public function toMarkdown()
-    {
+    public function toMarkdown() {
         $sql = "select * from api order by `order`";
         $rs = $this->db->query($sql);
         echo "<pre>";
@@ -76,11 +72,11 @@ class apiController extends BaseController {
             $params_arr = $this->parseParam($r['params']);
             if (is_array($params_arr)) {
                 foreach ($params_arr as $key => $value) {
-                    $params.= "| $key | $value |  |\n";
+                    $params .= "| $key | $value |  |\n";
                 }
             }
 
-        $t = <<<mk
+            $t = <<<mk
 ### {$r['name']}
 - url:{$r['url']}
 - method:{$r['method']}
@@ -94,16 +90,15 @@ $params
 ```
 
 mk;
-        echo $t;
+            echo $t;
         }
     }
 
-    public function test()
-    {
+    public function test() {
         // 解析参数
-        $params    =  P('params');
-        $url       =  P('url');
-        $method    =  P('method');
+        $params = P('params');
+        $url = P('url');
+        $method = P('method');
         // 构造请求
         $post = $this->parseParam($params);
         // 验签
@@ -113,18 +108,19 @@ mk;
         $client = new  HttpClient();
         // to do 根据请求发不同请求
         $time_start = microtime(true);
-        $rtn = $client->post($url,$post);
-        $time_cost = 'Time Cost: '.((microtime(true)-$time_start)*1000).' ms';
+        $rtn = $client->post($url, $post);
+        $time_cost = 'Time Cost: ' . ((microtime(true) - $time_start) * 1000) . ' ms';
         // echo $rtn;
         // 解析返回值
         // $rtn = str_replace('\\', '', $rtn) ;
         // var_dump(json_decode($rtn));
-        $data['rtn']    = json_encode(json_decode($rtn),JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) ;
-        if ($data['rtn']=='null') {
+//        $data['rtn'] = json_encode(json_decode($rtn), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $data['rtn'] = json_encode(json_decode($rtn), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if ($data['rtn'] == 'null') {
             $json['rtn'] = $rtn;
             $json['cost'] = $time_cost;
             echo json_encode($json);
-        }else{
+        } else {
             // echo $data['rtn'];
             $json['rtn'] = $data['rtn'];
             $json['cost'] = $time_cost;
@@ -134,11 +130,10 @@ mk;
         // $data['params'] = $params;
         $id = P('id');
         $where = "id=$id";
-        $rtn = $this->model->update($data,$where);
+        $rtn = $this->model->update($data, $where);
     }
 
-    public function delete()
-    {
+    public function delete() {
         $id = P('id');
         $where = "id=$id";
         $this->model->delete($where);
