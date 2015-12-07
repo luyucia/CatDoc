@@ -27,5 +27,9 @@
   background: #fffaf3;
 }
 .ui.modal {
-  top: 20%;
+  position: absolute;
+  margin-top: -434.5px!important;
+}
+.ui.active.dimmer { 
+    overflow: auto;
 }
