@@ -244,7 +244,7 @@
         $(':input[name="method"]').dropdown('set value', method)
     });
     //url/post显示
-    $("#tablelist tr td:eq(1)").live("click", function (event) {
+    $("#tablelist tr td:nth-child(1)").live("click", function (event) {
 	    event.stopPropagation();
         $('.ui.accordion').accordion('open', 1);
         url = $(this).parent().find('.api_url').text();
