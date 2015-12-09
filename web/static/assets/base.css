@@ -31,6 +31,76 @@
   margin-top: 0px!important;
   top: 3rem!important;
 }
-.ui.active.dimmer { 
-    overflow: auto;
+.ui.active.dimmer {
+  overflow: auto;
+}
+#bo {
+  background: #f3f3f3;
+  font-family: "微软雅黑";
+}
+header {
+  text-align: center;
+  overflow: hidden;
+  margin-top: 60px;
+  font-family: "微软雅黑";
+}
+header h1 {
+  font-family: inherit;
+  color: #008b57;
+  margin-bottom: 5px;
+}
+header p {
+  font-size: 16px;
+  font-family: inherit;
+  color: #999999;
+}
+.container {
+  background: #fff;
+  width: 70%;
+  margin: 30px auto;
+  padding: 0 50px;
+  border: 50px solid #fff;
+  border-bottom: 70px solid #fff;
+  position: relative;
+  font-family: "微软雅黑";
+}
+.container .ui.form label:not(.lab) {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+.container .btn {
+  float: right;
+  padding: 6px 20px;
+  cursor: pointer;
+  background-color: #009a61;
+  border: 1px solid transparent;
+  border-color: #008b57;
+  border-radius: 3px;
+  color: #fff;
+  font-family: "微软雅黑";
+  font-size: 14px;
+}
+.container h3 {
+  font-weight: normal;
+  font-family: inherit;
+  margin-bottom: 30px;
+  color: #777;
+}
+.container .ui.form .fields > .field:first-child {
+  width: 80%;
+}
+.container a {
+  color: #008E59;
+}
+section {
+  margin-bottom: 50px;
+  text-align: center;
+  color: #c2ccd0;
+}
+section a {
+  color: #999999;
+  font-family: "微软雅黑";
+  font-size: 14px;
+  font-weight: normal;
 }

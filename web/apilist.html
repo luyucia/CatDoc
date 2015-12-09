@@ -131,7 +131,7 @@
 </script>
 
 <script type="text/javascript">
-
+ 	
     //快速检索
     $('#search').keyup(function () {
         var k = $(this).val();
@@ -221,11 +221,16 @@
 
     //信息上屏
     $("#tablelist").delegate('tr', 'click', function () {
+	    
         $('.ui.accordion').accordion('open', 1);
         url = $(this).find('.api_url').text();
         params = $(this).find('.api_params').val();
         method = $(this).find('.api_method').text();
 
+		var str = "<div class='ui form'><div class='field'><textarea rows='2' class='api_url' ></textarea></div></div>"
+		$("#tablelist tr td[class='api_url']").html(str);
+		$(":input[class = 'api_url']").val(url);
+		
         $(':input[name="name"]').val('未命名');
         $(':input[name="url"]').val(url);
         $(':input[name="params"]').val(params);
