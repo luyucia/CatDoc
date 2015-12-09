@@ -243,25 +243,64 @@
 //        $(':input[name="method"]').find('option[value="' + method + '"]').attr("selected", true);
         $(':input[name="method"]').dropdown('set value', method)
     });
-    //url/post显示
-    $("#tablelist tr td:nth-child(1)").live("click", function (event) {
-	    event.stopPropagation();
-        $('.ui.accordion').accordion('open', 1);
-        url = $(this).parent().find('.api_url').text();
-        params = $(this).parent().find('.api_params').val();
-        method = $(this).parent().find('.api_method').text();
-
-		var str = "<div class='ui form'><div class='field'><textarea rows='2' class='api_url' ></textarea></div></div>"
-		$(this).parent().find('.api_url').html(str);
-		$(":input[class = 'api_url']").val(url);
-		
-        $(':input[name="name"]').val('未命名');
-        $(':input[name="url"]').val(url);
-        $(':input[name="params"]').val(params);
-//        $(':input[name="method"]').find('option[value="' + method + '"]').attr("selected", true);
-        $(':input[name="method"]').dropdown('set value', method)
-    });
+    //url修改
 	
+	var flag = 0, flag1 = 0;
+    $("#tablelist > tr > td[class = 'api_url']").live("click", function () {
+	    $('.ui.accordion').accordion('open', 1);
+        url = $(this).val()? $(this).val():$(this).text();		
+		if (flag > 0){//flag>1说明不是第一次单击，内容不需要变化
+		    flag ++;
+		}
+		if(flag == 0)
+		//flag=0说明是第一次单击
+		{
+		    flag ++;
+		    var str = "<div class='ui form'><div class='field'><textarea rows='2' class='api_url' ></textarea></div></div>"
+		    $(this).html(str);
+		    $(this).find("textarea").val(url);
+			$(this).find("textarea").focus();
+		}
+    });
+	$("#tablelist > tr > td[class = 'api_url']").live("blur", function () {
+	    flag = 0;
+		var newurl = $(this).find("textarea").val();
+		$(this).html(newurl);
+       
+    });
+	//method修改
+	
+	$("#tablelist > tr > td[class = 'api_method']").live("click", function () {
+        url = $(this).val()? $(this).val():$(this).text();		
+		if (flag > 0){//flag>1说明不是第一次单击，内容不需要变化
+		    flag ++;
+		}
+		if(flag == 0)
+		//flag=0说明是第一次单击
+		{
+		    flag ++;
+			var selector = $("<select></select>");  
+            selector.className = "ui dropdown";
+            selector.id = "method";
+            selector.name = "method";			
+            selector.append('<option value="post">post</option>');     
+			selector.append('<option value="get">get</option>');  
+			selector.append('<option value="put">put</option>');  
+			selector.append('<option value="delete">delete</option>');  
+            $(this).html(selector);
+		   // var str = "<select class='ui dropdown' name='method' id='method' ><option value='post'>post</option><option value='get'>get</option><option value='put'>put</option><option value='delete'>delete</option></select>"
+		   // $(this).html(str);
+		    $(this).find("select").val(url);
+			$(this).find("select").focus();
+		}
+    });
+	$("#tablelist > tr > td[class = 'api_method']").live("blur", function () {
+	    flag = 0;
+		var newurl = $(this).find("select").val();
+		$(this).html(newurl);
+       
+    });
+
     //初始化表单组件
     $('select.dropdown').dropdown();
     $('.ui.accordion').accordion();
