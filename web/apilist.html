@@ -229,11 +229,28 @@
 
     //信息上屏
 
-    $("#tablelist").delegate('tr', 'dblick', function () {
+    $("#tablelist").delegate('tr', 'click', function () {
         $('.ui.accordion').accordion('open', 1);
         url = $(this).find('.api_url').text();
         params = $(this).find('.api_params').val();
         method = $(this).find('.api_method').text();
+
+		
+		
+        $(':input[name="name"]').val('未命名');
+        $(':input[name="url"]').val(url);
+        $(':input[name="params"]').val(params);
+//        $(':input[name="method"]').find('option[value="' + method + '"]').attr("selected", true);
+        $(':input[name="method"]').dropdown('set value', method)
+    });
+    //url/post显示
+     $("td").find(".api_url").click(function (event) {
+	    alert("sss");
+	    event.stopPropagation();
+        $('.ui.accordion').accordion('open', 1);
+        url = $(this).parent().find('.api_url').text();
+        params = $(this).parent().find('.api_params').val();
+        method = $(this).parent().find('.api_method').text();
 
 		var str = "<div class='ui form'><div class='field'><textarea rows='2' class='api_url' ></textarea></div></div>"
 		$("#tablelist tr td[class='api_url']").html(str);
@@ -245,7 +262,7 @@
 //        $(':input[name="method"]').find('option[value="' + method + '"]').attr("selected", true);
         $(':input[name="method"]').dropdown('set value', method)
     });
-
+	
     //初始化表单组件
     $('select.dropdown').dropdown();
     $('.ui.accordion').accordion();
