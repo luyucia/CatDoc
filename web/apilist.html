@@ -55,7 +55,7 @@
                     <input type="text" placeholder="请求参数" name="params" id="params" />
                 </div>
 
-                <button class="ui secondary button" id="save_btn">保存</button>
+                <span class="ui secondary button" id="save_btn">保存</span>
             </form>
         </div>
     </div>
@@ -69,9 +69,9 @@
             <thead>
             <tr>
                 <th>接口名</th>
-                <th>URL</th>
+                <th style="width:30%">URL</th>
                 <th>方法</th>
-                <th>参数</th>
+                <th style="width:20%">参数</th>
                 <th>测试</th>
                 <th>删除</th>
             </tr>
@@ -199,10 +199,18 @@
 //                $('.api_rtn').text(d.rtn);
                 $('.cost').text(d.cost);
 
-                jf.doFormat(d.rtn); //格式化json
+
+                try{
+                    var json_rs = jQuery.parseJSON(d.rtn)
+                    jf.doFormat(d.rtn); //格式化json
+                }
+                catch(e){
+                    $('.api_rtn').text(d.rtn);
+                }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
+                // alert(textStatus);
+                $('.api_rtn').text(XMLHttpRequest);
             }
         });
     });
@@ -220,8 +228,8 @@
     });
 
     //信息上屏
-    $("#tablelist").delegate('tr', 'click', function () {
-	    
+
+    $("#tablelist").delegate('tr', 'dblick', function () {
         $('.ui.accordion').accordion('open', 1);
         url = $(this).find('.api_url').text();
         params = $(this).find('.api_params').val();

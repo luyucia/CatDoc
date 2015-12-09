@@ -9,7 +9,7 @@ define('CAT_CONTROLLER_PATH', APP_PATH . '/controllers/');
 // controller文件后缀,默认是空,也可以是Controller或其他,这样文件命名就要是exampleController.php
 define('CAT_CONTROLLER_FILE_SUFFIX', '');
 // model文件后缀,默认是空,也可以是Model或其他,这样文件命名就要是exampleModel.php
-define('CAT_MODEL_FILE_SUFFIX', '');
+define('CAT_MODEL_FILE_SUFFIX', 'Model');
 
 return array(
     // 控制器子目录，如果希望在控制器目录下放子目录可在此设置
