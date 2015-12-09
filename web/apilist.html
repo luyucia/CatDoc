@@ -244,8 +244,7 @@
         $(':input[name="method"]').dropdown('set value', method)
     });
     //url/post显示
-     $("td").find(".api_url").click(function (event) {
-	    alert("sss");
+    $("#tablelist tr td:eq(1)").live("click", function (event) {
 	    event.stopPropagation();
         $('.ui.accordion').accordion('open', 1);
         url = $(this).parent().find('.api_url').text();
@@ -253,7 +252,7 @@
         method = $(this).parent().find('.api_method').text();
 
 		var str = "<div class='ui form'><div class='field'><textarea rows='2' class='api_url' ></textarea></div></div>"
-		$("#tablelist tr td[class='api_url']").html(str);
+		$(this).parent().find('.api_url').html(str);
 		$(":input[class = 'api_url']").val(url);
 		
         $(':input[name="name"]').val('未命名');
