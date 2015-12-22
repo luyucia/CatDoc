@@ -133,10 +133,27 @@ mk;
             echo json_encode($json);
         }
 
-        // $data['params'] = $params;
+        $data['params'] = $params;
+        $data['url'] = $url;
+        $data['method'] = $method;
+
         $id = P('id');
         $where = "id=$id";
-        $rtn = $this->model->update($data, $where);
+
+        $rtn = json_decode($rtn, true);
+
+        //如果成功则更新结果
+        if ($rtn['code'] == 0) {
+            $referer = trim($_SERVER['HTTP_REFERER'],'http://101.200.200.207:');
+            $prot    = substr($referer,0,stripos($referer,"/"));
+            $filterList = array(
+                "8020",
+                "8010",
+            );
+            if(in_array($prot,$filterList)){
+                $this->model->update($data, $where);
+            }
+        }
     }
 
     public function delete() {

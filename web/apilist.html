@@ -131,7 +131,7 @@
 </script>
 
 <script type="text/javascript">
-
+ 	
     //快速检索
     $('#search').keyup(function () {
         var k = $(this).val();
@@ -229,17 +229,69 @@
     });
 
     //信息上屏
-    $("#tablelist").delegate('tr', 'dblick', function () {
+
+    $("#tablelist").delegate('tr', 'click', function () {
         $('.ui.accordion').accordion('open', 1);
         url = $(this).find('.api_url').text();
         params = $(this).find('.api_params').val();
         method = $(this).find('.api_method').text();
 
+		
+		
         $(':input[name="name"]').val('未命名');
         $(':input[name="url"]').val(url);
         $(':input[name="params"]').val(params);
 //        $(':input[name="method"]').find('option[value="' + method + '"]').attr("selected", true);
         $(':input[name="method"]').dropdown('set value', method)
+    });
+	
+    //url修改
+	var flag = 0, flag1 = 0;
+    $("#tablelist > tr > td[class = 'api_url']").live("click", function () {
+		if(flag == 0)
+		//flag=0说明是第一次单击
+		{
+		    flag =1;
+			url = $(this).text();	
+		    var str = "<div class='ui form'><div class='field'><textarea rows='2' class='api_url' ></textarea></div></div>"
+		    $(this).html(str);
+		    $(this).find("textarea").val(url);
+			$(this).find("textarea").focus();
+		}
+    });
+	$("#tablelist > tr > td[class = 'api_url']").live("blur", function () {
+	    flag = 0;
+		var newurl = $(this).find("textarea").val();
+		$(this).html(newurl);
+       
+    });
+	
+	//method修改
+	$("#tablelist > tr > td[class = 'api_method']").live("click", function () {
+		if(flag1 == 0)
+		//flag=0说明是第一次单击
+		{
+		    url = $(this).text();		
+		    flag1 =1;
+			var selector = $("<select></select>");  
+            selector.className = "ui dropdown";
+            selector.id = "method";
+            selector.name = "method";			
+            selector.append('<option value="post">post</option>');     
+			selector.append('<option value="get">get</option>');  
+			selector.append('<option value="put">put</option>');  
+			selector.append('<option value="delete">delete</option>');  
+            $(this).html(selector);
+		   
+		    $(this).find("select").val(url);
+			$(this).find("select").focus();
+		}
+    });
+	$("#tablelist > tr > td[class = 'api_method']").live("blur", function () {
+	    flag1 = 0;
+		var newurl = $(this).find("select").val();
+		$(this).html(newurl);
+       
     });
 
     //初始化表单组件
