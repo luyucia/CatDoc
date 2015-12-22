@@ -199,7 +199,7 @@
 //                $('.api_rtn').text(d.rtn);
                 $('.cost').text(d.cost);
 
-
+                // console.log(d)
                 try{
                     var json_rs = jQuery.parseJSON(d.rtn)
                     jf.doFormat(d.rtn); //格式化json
@@ -210,6 +210,7 @@
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 // alert(textStatus);
+
                 $('.api_rtn').text(XMLHttpRequest);
             }
         });

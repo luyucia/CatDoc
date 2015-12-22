@@ -38,7 +38,11 @@ class apiController extends BaseController {
         if (!empty($params[0])) {
             foreach ($params as $p) {
                 $pair = explode('=', $p);
-                $postdata[$pair[0]] = $pair[1];
+                if (isset($pair[1])) {
+                    $postdata[$pair[0]] = $pair[1];
+                }else{
+                    $postdata[$pair[0]] = '';
+                }
             }
         }
         return $postdata;
@@ -64,7 +68,7 @@ class apiController extends BaseController {
     }
 
     public function toMarkdown() {
-        $sql = "select * from api order by `order`";
+        $sql = "select * from api order by id";
         $rs = $this->db->query($sql);
         echo "<pre>";
         foreach ($rs as $r) {
@@ -75,6 +79,8 @@ class apiController extends BaseController {
                     $params .= "| $key | $value |  |\n";
                 }
             }
+
+            $r['rtn'] = json_encode(json_decode($r['rtn'],true),JSON_PRETTY_PRINT);
 
             $t = <<<mk
 ### {$r['name']}
