@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" >
+<html lang="en">
 <head>
     <title>CatDoc</title>
     <meta charset="utf-8">
@@ -21,7 +21,7 @@
         <div class="content">
             <form class="ui form">
                 <div class="ui icon fluid input focus">
-                    <input type="text" name="keywords" id="search" placeholder="请输入关键字" />
+                    <input type="text" name="keywords" id="search" placeholder="请输入关键字"/>
                     <i class="circular search link icon"></i>
                 </div>
 
@@ -35,7 +35,7 @@
             <form class="ui form" id="api_form">
                 <div class="field">
                     <label>接口名称</label>
-                    <input name="name" id="name" type="text" />
+                    <input name="name" id="name" type="text"/>
                 </div>
                 <div class="field">
                     <label>URL</label>
@@ -43,7 +43,7 @@
                 </div>
                 <div class="field">
                     <label>Method</label>
-                    <select class="ui dropdown" name="method" id="method" >
+                    <select class="ui dropdown" name="method" id="method">
                         <option value="post">post</option>
                         <option value="get">get</option>
                         <option value="put">put</option>
@@ -52,7 +52,12 @@
                 </div>
                 <div class="field">
                     <label>请求参数</label>
-                    <input type="text" placeholder="请求参数" name="params" id="params" />
+                    <input type="text" placeholder="请求参数" name="params" id="params"/>
+                </div>
+
+                <div class="field" id="doc-comment">
+                    <label>文档参数</label>
+                    <textarea class="field" name="comment"></textarea>
                 </div>
 
                 <span class="ui secondary button" id="save_btn">保存</span>
@@ -103,16 +108,17 @@
 
 <script id="doclist" type="text/x-dot-template">
     {{~it :value:index}}
-    <tr dataid="{{=value.id}}" >
+    <tr dataid="{{=value.id}}">
         <td>
-            <div class="ui teal ribbon label"> {{=value.name}} </div>
+            <div class="ui teal ribbon label"> {{=value.name}}</div>
         </td>
-        <td class="api_url" >{{=value.url}}</td>
-        <td class="api_method" >{{=value.method}}</td>
+        <td class="api_url">{{=value.url}}</td>
+        <td class="api_method">{{=value.method}}</td>
         <td>
             <div class="ui form">
                 <div class="field">
-                    <textarea rows="2" class="api_params" >{{=value.params}}</textarea>
+                    <textarea rows="2" class="api_params">{{=value.params}}</textarea>
+                    <input type="hidden" class="api_comment" value="{{=value.comment}}" />
                 </div>
             </div>
         </td>
@@ -131,7 +137,7 @@
 </script>
 
 <script type="text/javascript">
- 	
+
     //快速检索
     $('#search').keyup(function () {
         var k = $(this).val();
@@ -170,7 +176,7 @@
     //测试接口
     //json格式化
     var options = {
-        dom : '.api_rtn' //对应容器的css选择器
+        dom: '.api_rtn' //对应容器的css选择器
     };
     var jf = new JsonFormater(options); //创建对象
     $("#tablelist").delegate('.test_btn', 'click', function () {
@@ -187,24 +193,24 @@
         data['id'] = id;
 
         $.ajax({
-            url:'api/test',
-            data:data,
-            type:'post',
-            dataType:'json',
+            url: 'api/test',
+            data: data,
+            type: 'post',
+            dataType: 'json',
             beforeSend: function () {
 //                $('.long.test.modal').modal('show');
             },
-            success:function(d){
+            success: function (d) {
                 $('.long.test.modal').modal('show');
 //                $('.api_rtn').text(d.rtn);
                 $('.cost').text(d.cost);
 
                 // console.log(d)
-                try{
+                try {
                     var json_rs = jQuery.parseJSON(d.rtn)
                     jf.doFormat(d.rtn); //格式化json
                 }
-                catch(e){
+                catch (e) {
                     $('.api_rtn').text(d.rtn);
                 }
             },
@@ -235,63 +241,64 @@
         url = $(this).find('.api_url').text();
         params = $(this).find('.api_params').val();
         method = $(this).find('.api_method').text();
+        comment = $(this).find('.api_comment').val();
+        comment = (comment == 'null')?'':comment;
 
-		
-		
         $(':input[name="name"]').val('未命名');
         $(':input[name="url"]').val(url);
         $(':input[name="params"]').val(params);
+        $('#doc-comment textarea').val(comment);
 //        $(':input[name="method"]').find('option[value="' + method + '"]').attr("selected", true);
         $(':input[name="method"]').dropdown('set value', method)
     });
-	
+
     //url修改
-	var flag = 0, flag1 = 0;
+    var flag = 0, flag1 = 0;
     $("#tablelist > tr > td[class = 'api_url']").live("click", function () {
-		if(flag == 0)
-		//flag=0说明是第一次单击
-		{
-		    flag =1;
-			url = $(this).text();	
-		    var str = "<div class='ui form'><div class='field'><textarea rows='2' class='api_url' ></textarea></div></div>"
-		    $(this).html(str);
-		    $(this).find("textarea").val(url);
-			$(this).find("textarea").focus();
-		}
+        if (flag == 0)
+        //flag=0说明是第一次单击
+        {
+            flag = 1;
+            url = $(this).text();
+            var str = "<div class='ui form'><div class='field'><textarea rows='2' class='api_url' ></textarea></div></div>"
+            $(this).html(str);
+            $(this).find("textarea").val(url);
+            $(this).find("textarea").focus();
+        }
     });
-	$("#tablelist > tr > td[class = 'api_url']").live("blur", function () {
-	    flag = 0;
-		var newurl = $(this).find("textarea").val();
-		$(this).html(newurl);
-       
+    $("#tablelist > tr > td[class = 'api_url']").live("blur", function () {
+        flag = 0;
+        var newurl = $(this).find("textarea").val();
+        $(this).html(newurl);
+
     });
-	
-	//method修改
-	$("#tablelist > tr > td[class = 'api_method']").live("click", function () {
-		if(flag1 == 0)
-		//flag=0说明是第一次单击
-		{
-		    url = $(this).text();		
-		    flag1 =1;
-			var selector = $("<select></select>");  
+
+    //method修改
+    $("#tablelist > tr > td[class = 'api_method']").live("click", function () {
+        if (flag1 == 0)
+        //flag=0说明是第一次单击
+        {
+            url = $(this).text();
+            flag1 = 1;
+            var selector = $("<select></select>");
             selector.className = "ui dropdown";
             selector.id = "method";
-            selector.name = "method";			
-            selector.append('<option value="post">post</option>');     
-			selector.append('<option value="get">get</option>');  
-			selector.append('<option value="put">put</option>');  
-			selector.append('<option value="delete">delete</option>');  
+            selector.name = "method";
+            selector.append('<option value="post">post</option>');
+            selector.append('<option value="get">get</option>');
+            selector.append('<option value="put">put</option>');
+            selector.append('<option value="delete">delete</option>');
             $(this).html(selector);
-		   
-		    $(this).find("select").val(url);
-			$(this).find("select").focus();
-		}
+
+            $(this).find("select").val(url);
+            $(this).find("select").focus();
+        }
     });
-	$("#tablelist > tr > td[class = 'api_method']").live("blur", function () {
-	    flag1 = 0;
-		var newurl = $(this).find("select").val();
-		$(this).html(newurl);
-       
+    $("#tablelist > tr > td[class = 'api_method']").live("blur", function () {
+        flag1 = 0;
+        var newurl = $(this).find("select").val();
+        $(this).html(newurl);
+
     });
 
     //初始化表单组件

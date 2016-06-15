@@ -27,6 +27,7 @@ class apiController extends BaseController {
         $data['url'] = P('url');
         $data['method'] = P('method');
         $data['params'] = P('params');
+        $data['comment'] = P('comment');
         // $data['rtn'] = $rtn;
         $rtn = $this->model->insert($data);
         echo $rtn;
